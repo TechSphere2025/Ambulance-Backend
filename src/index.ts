@@ -1,18 +1,33 @@
-import express, { Request, Response } from 'express';
-import { connectToDb, pool } from './database'; // Import connection and pool
+import express from 'express';
+import dotenv from 'dotenv';
+import userRouter from './routes/userRoutes';
+import pool from './database';
 
 
-const port = process.env.PORT || 3000;
+dotenv.config();
 
-// Create a new Express app
+
+
 const app = express();
 
-// Middleware to parse JSON bodies
 app.use(express.json());
+app.use('/api/users', userRouter);
 
+const PORT = process.env.PORT || 3000;
 
-// Start the Express server
-app.listen(port, async () => {
-    console.log(`Server running on http://localhost:${port}`);
-    await connectToDb(); // Test PostgreSQL connection when the server starts
-  });
+DbConnection();
+
+app.listen(PORT, () => {
+  console.log(`Server is running on port ${PORT}`);
+});
+
+async function DbConnection() {
+  try {
+    const client = await pool.connect();
+    console.log('Database connected successfully');
+    client.release();
+  } catch (error) {
+    console.error('Database connection failed:', error);
+  }
+}
+
