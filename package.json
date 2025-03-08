@@ -1,0 +1,34 @@
+{
+  "name": "ambulance-backend",
+  "version": "1.0.0",
+  "description": "ambulance project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/TechSphere2025/Ambulance-Backend.git"
+  },
+  "keywords": [
+    "ambulance",
+    "app"
+  ],
+  "author": "prasanth",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/TechSphere2025/Ambulance-Backend/issues"
+  },
+  "homepage": "https://github.com/TechSphere2025/Ambulance-Backend#readme",
+  "devDependencies": {
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.9",
+    "@types/pg": "^8.11.11",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.2"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "pg": "^8.13.3"
+  }
+}
