@@ -39,11 +39,13 @@ export const loginUser = async (req: Request, res: Response) => {
     const user :any = await baseRepository.findOne('users', 'email = $1', [email]);
     
     if (!user) {
-      return res.status(400).json({ error: 'Invalid email or password' });
+      return res.status(400).json({ error: 'Invalid email' });
     }
     
     const loginData:any = await baseRepository.findOne('login', 'user_id = $1', [user.id]);
+
     let matachPassword = await common.comparePassword(password, loginData.password)
+    
     if (!loginData || !matachPassword) {
       return res.status(400).json({ error: 'Invalid email or password' });
     }
