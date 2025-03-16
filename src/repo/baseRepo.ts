@@ -1,6 +1,9 @@
 import pool from '../database';
 
 class BaseRepository {
+  get(addressSchema: { hospitalId: { type: string; required: boolean; }; addressLine1: { type: string; required: boolean; }; addressLine2: { type: string; required: boolean; }; landmark: { type: string; required: boolean; }; city: { type: string; required: boolean; }; state: { type: string; required: boolean; }; lat: { type: string; required: boolean; }; long: { type: string; required: boolean; }; status: { type: string; required: boolean; }; }) {
+      throw new Error("Method not implemented.");
+  }
   async findAll<T>(table: string): Promise<T[]> {
     const result = await pool.query(`SELECT * FROM ${table}`);
     return result.rows;
