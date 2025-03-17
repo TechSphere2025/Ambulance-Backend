@@ -3,6 +3,8 @@ import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes';
 import hospitalRouter from './routes/hospitalRoutes';
 import addressRoutes from './routes/addressRoutes';
+import locationRouter from './routes/location';
+
 import pool from './database';
 
 dotenv.config();
@@ -15,6 +17,8 @@ app.use(express.json());
 app.use('/api/users', userRouter);
 app.use('/api/hospital', hospitalRouter);
 app.use('/api/address', addressRoutes);
+app.use('/api/location', locationRouter);
+
 
 const PORT = process.env.PORT || 3000;
 
