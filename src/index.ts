@@ -4,6 +4,7 @@ import userRouter from './routes/userRoutes';
 import hospitalRouter from './routes/hospitalRoutes';
 import addressRoutes from './routes/addressRoutes';
 import locationRouter from './routes/location';
+import requestRouter from './routes/requestRoutes';
 
 import pool from './database';
 
@@ -18,6 +19,7 @@ app.use('/api/users', userRouter);
 app.use('/api/hospital', hospitalRouter);
 app.use('/api/address', addressRoutes);
 app.use('/api/location', locationRouter);
+app.use('/api/requests', requestRouter);
 
 
 const PORT = process.env.PORT || 3000;
