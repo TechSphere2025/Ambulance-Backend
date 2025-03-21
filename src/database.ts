@@ -58,8 +58,6 @@ const createUsersTable = async () => {
           id SERIAL PRIMARY KEY,
           hospitalId INTEGER NOT NULL,
           patientId INTEGER NOT NULL,
-          pickupDetails INTEGER NOT NULL,
-          dropDetails INTEGER NOT NULL,
           paymentId INTEGER NOT NULL,
           status INTEGER NOT NULL
         )
