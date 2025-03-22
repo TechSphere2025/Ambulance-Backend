@@ -24,10 +24,21 @@ class BaseRepository {
     }
   }
 
-  async findAll<T>(table: string): Promise<T[]> {
-    const result = await pool.query(`SELECT * FROM ${table}`);
+  async findAll<T>(table: string, where?: { [key: string]: any }): Promise<T[]> {
+    let query = `SELECT * FROM ${table}`;
+  
+    // If the `where` clause is provided, dynamically build the WHERE condition
+    if (where) {
+      const conditions = Object.entries(where)
+        .map(([key, value]) => `${key} = '${value}'`)
+        .join(" AND ");
+      query += ` WHERE ${conditions}`;
+    }
+  
+    const result = await pool.query(query);
     return result.rows;
   }
+  
 
   async findOne<T>(table: string, condition: string, values: any[]): Promise<T | null> {
     const result = await pool.query(`SELECT * FROM ${table} WHERE ${condition} LIMIT 1`, values);

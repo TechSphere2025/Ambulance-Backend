@@ -106,12 +106,12 @@ export const createHospitalUser = async (req: Request, res: Response, next: Next
   try {
     // Validate request body
 
-  
+
     const { error } = joiSchema.userSchema.validate(req.body);
 
     const token = req.headers['token'];
 
-    let details=await getdetailsfromtoken(token)
+    let details = await getdetailsfromtoken(token)
 
     if (error) {
       next(error);
@@ -138,12 +138,12 @@ export const createHospitalUser = async (req: Request, res: Response, next: Next
 
     const roleId = roleData[0].id;  // Get the corresponding role_id
 
-    let status=getStatus("active")
-    let hospitalid= details.hospitalid;
+    let status = getStatus("active")
+    let hospitalid = details.hospitalid;
     // Insert user data into the 'users' table
     const newUser: any = await baseRepository.insert(
       "users",
-      { firstname, lastname, email, countrycode, mobileno,status,hospitalid },
+      { firstname, lastname, email, countrycode, mobileno, status, hospitalid },
       userSchema
     );
 
@@ -173,5 +173,20 @@ export const createHospitalUser = async (req: Request, res: Response, next: Next
   } catch (err) {
     console.log(err);
     return ResponseMessages.ErrorHandlerMethod(res, responseMessage.internal_server_error, err);
+  }
+};
+
+export const hospitalusers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+
+    let hospitalId = 1
+    const users = await baseRepository.findAll("users", {
+      hospitalId: hospitalId
+    });
+
+    res.json(users);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };
