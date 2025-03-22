@@ -6,6 +6,7 @@ import addressRoutes from './routes/addressRoutes';
 import locationRouter from './routes/location';
 import roleRouter from './routes/roleRoutes';
 
+import requestRouter from './routes/requestRoutes';
 
 import pool from './database';
 import { errorHandlingMiddleware } from './common/joiValidations/errorhandler'; 
@@ -22,6 +23,7 @@ app.use('/api/users', userRouter);
 app.use('/api/hospital', hospitalRouter);
 app.use('/api/address', addressRoutes);
 app.use('/api/location', locationRouter);
+app.use('/api/requests', requestRouter);
 
 app.use('/api/role', roleRouter);
 

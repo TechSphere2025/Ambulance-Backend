@@ -71,7 +71,28 @@ const createUsersTable = async () => {
     `);
 
 
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS patients(
+         id SERIAL PRIMARY KEY,
+         firstName VARCHAR(100) NOT NULL,
+         lastName VARCHAR(100) NOT NULL,
+         mobileNo INTEGER NOT NULL,
+         countryCode INTEGER NOT NULL,
+         dob INTEGER NOT NULL,
+         status INTEGER NOT NULL
+        );
+      `);
 
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS payment(
+       id SERIAL PRIMARY KEY,
+       currencyType VARCHAR(100) NOT NULL,
+       amount INTEGER NOT NULL,
+       discount INTEGER NOT NULL,
+       totalAmount INTEGER NOT NULL,
+       status INTEGER NOT NULL
+      );
+    `);
 
   } catch (error) {
     console.error("Error creating users table:", error);

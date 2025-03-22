@@ -22,10 +22,10 @@ export const corporatePoc = ["HR", "Finance", "Operation", "OperationHead"]
 export const planExpiryRule = { 0: "As Per MOU", 1: "1 Year  From Registered Date" }
 export const whoPayingType = { 0: "Company", 1: "User" }
 
+export const customerImagesPath = "customer";
+export const comapnyImagesPath = "company";
+export const anvayaaUsers = "anvayaUsers";
 
-export const customerImagesPath = 'customer'
-export const comapnyImagesPath = 'company'
-export const anvayaaUsers = 'anvayaUsers'
 
 export const emergencyFor = { 0: 'Self', 1: 'Dependent', 2: 'Both' }
 
@@ -59,4 +59,5 @@ export function getStatus(status: number | string): string | number {
   }
 }
 
+export const nishchintRequestEmail = "servicerequest.nishchint@anvayaa.in";
 
