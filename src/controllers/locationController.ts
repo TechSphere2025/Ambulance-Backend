@@ -90,7 +90,7 @@ export const searchAddress = async (req: Request, res: Response) => {
       location:response
   
   }
-        return ResponseMessages.successResponse(res, "Data fetch successfully",responseObj);
+        return ResponseMessages.Response(res, "Data fetch successfully",responseObj);
     
      
 

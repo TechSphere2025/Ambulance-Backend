@@ -16,6 +16,7 @@ class BaseRepository {
 
   async insert<T>(table: string, data: Record<string, any>, schema: Record<string, any>): Promise<T> {
     // Validate data against schema
+  
     for (const key of Object.keys(schema)) {
       if (schema[key].required && !data[key]) {
         throw new Error(`${key} is required`);

@@ -9,12 +9,29 @@ const pool = new Pool({
 
 const createUsersTable = async () => {
   try {
+
+    await pool.query(`
+    CREATE TABLE IF NOT EXISTS role (
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL,   
+    status SMALLINT NOT NULL DEFAULT 0 
+);
+
+    `);
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
-        id SERIAL PRIMARY KEY,
-        name VARCHAR(100) NOT NULL,
-        email VARCHAR(100) UNIQUE NOT NULL
-      );
+    id SERIAL PRIMARY KEY,
+    firstname VARCHAR(100) NOT NULL,
+    lastname VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    countrycode VARCHAR(10) NOT NULL,   
+     mobileno VARCHAR(15) UNIQUE NOT NULL, 
+     roles INTEGER[] NOT NULL ,
+    status SMALLINT NOT NULL DEFAULT 1,   
+    createdat TIMESTAMP DEFAULT CURRENT_TIMESTAMP, 
+    updatedat TIMESTAMP DEFAULT CURRENT_TIMESTAMP  
+);
+
     `);
 
     await pool.query(`
@@ -53,9 +70,7 @@ const createUsersTable = async () => {
       );
     `);
 
-    // await pool.query(`
-    //     CREATE TABLE IF NOT EXISTS hospital
-    //   `);
+
 
 
   } catch (error) {

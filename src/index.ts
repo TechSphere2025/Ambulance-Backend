@@ -4,8 +4,12 @@ import userRouter from './routes/userRoutes';
 import hospitalRouter from './routes/hospitalRoutes';
 import addressRoutes from './routes/addressRoutes';
 import locationRouter from './routes/location';
+import roleRouter from './routes/roleRoutes';
+
 
 import pool from './database';
+import { errorHandlingMiddleware } from './common/joiValidations/errorhandler'; 
+import { ErrorRequestHandler } from 'express';
 
 dotenv.config();
 
@@ -19,22 +23,29 @@ app.use('/api/hospital', hospitalRouter);
 app.use('/api/address', addressRoutes);
 app.use('/api/location', locationRouter);
 
+app.use('/api/role', roleRouter);
+
+
 
 const PORT = process.env.PORT || 3000;
+// Regular middleware
 
-DbConnection();
+app.use(errorHandlingMiddleware as ErrorRequestHandler);
+
+// DbConnection();
 
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
 
-async function DbConnection() {
-  try {
-    const client = await pool.connect();
-    console.log('Database connected successfully');
-    client.release();
-  } catch (error) {
-    console.error('Database connection failed:', error);
-  }
-}
+
+// async function DbConnection() {
+//   try {
+//     const client = await pool.connect();
+//     console.log('Database connected successfully');
+//     client.release();
+//   } catch (error) {
+//     console.error('Database connection failed:', error);
+//   }
+// }
 

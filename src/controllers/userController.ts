@@ -1,21 +1,24 @@
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import baseRepository from "../repo/baseRepo";
 import { userSchema } from "../model/user";
 import { loginSchema } from "../model/login";
 import common from "../common/common";
+import { joiSchema } from '../common/joiValidations/validator';
+import ResponseMessages from "../common/responseMessages";
+import { responseMessage } from "../utils/serverResponses";
+import logger from "../logger/logger";
 
-export const getUsers = async (req: Request, res: Response) => {
-  try {
-    const users = await baseRepository.findAll("users");
-    res.json(users);
-  } catch (error) {
-    console.log(error);
-    res.status(500).json({ error: "Internal server error" });
-  }
-};
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+  logger.info("Entered Into Create User")
   try {
+
+    const { error } = joiSchema.userSchema.validate(req.body)
+
+    if (error) {
+      next(error)
+      return
+    }
     const { name, email, password } = req.body;
     const newUser: any = await baseRepository.insert(
       "users",
@@ -30,7 +33,20 @@ export const createUser = async (req: Request, res: Response) => {
     );
 
     res.status(201).json(newUser);
+  } catch (err) {
+    console.log(err)
+    return ResponseMessages.ErrorHandlerMethod(res, responseMessage.internal_server_error, err)
+
+    // res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const getUsers = async (req: Request, res: Response) => {
+  try {
+    const users = await baseRepository.findAll("users");
+    res.json(users);
   } catch (error) {
+    console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
@@ -38,7 +54,7 @@ export const createUser = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    console.log("asdfghjk",req.body)
+    console.log("asdfghjk", req.body)
     const user: any = await baseRepository.findOne("users", "email = $1", [
       email,
     ]);
