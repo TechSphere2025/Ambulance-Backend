@@ -62,6 +62,59 @@ const roleSchema = Joi.object({
         }),
 });
 
+const hospitalSchema = Joi.object({
+    name: Joi.string().required().messages({
+        'string.empty': commonValidations.hospitalname.empty,
+        'any.required': commonValidations.hospitalname.required,
+        'string.pattern.base': 'Invalid hospital name'
+    }),
+    countrycode: Joi.string().required().messages({
+        'string.empty': commonValidations.countrycode.empty,
+        'any.required': commonValidations.countrycode.required,
+        'string.pattern.base': 'Invalid CountryCode'
+    }),
+    mobileno: Joi.string().required().regex(/^[6-9]\d{9}$/).messages({
+        'string.empty': commonValidations.mobileNumber.empty,
+        'any.required': commonValidations.mobileNumber.required,
+        'string.pattern.base': commonValidations.mobileNumber.invalid
+    }),
+    email: Joi.string().required().email().messages({
+        'string.empty': commonValidations.emailID.empty,
+        'any.required': commonValidations.emailID.required,
+        'string.email': commonValidations.emailID.invalid
+    }),
+
+    // Adding `poc` field with commonValidations
+    poc: Joi.object({
+        firstname: Joi.string().required().messages({
+            'string.empty': commonValidations.firstName.empty,
+            'any.required': commonValidations.firstName.required
+        }),
+        lastname: Joi.string().required().messages({
+            'string.empty': commonValidations.lastName.empty,
+            'any.required': commonValidations.lastName.required
+        }),
+        email: Joi.string().required().email().messages({
+            'string.empty': commonValidations.emailID.empty,
+            'any.required': commonValidations.emailID.required,
+            'string.email': commonValidations.emailID.invalid
+        }),
+        countrycode: Joi.string().required().messages({
+            'string.empty': commonValidations.countrycode.empty,
+            'any.required': commonValidations.countrycode.required
+        }),
+        mobileno: Joi.string().required().regex(/^[6-9]\d{9}$/).messages({
+            'string.empty': commonValidations.mobileNumber.empty,
+            'any.required': commonValidations.mobileNumber.required,
+            'string.pattern.base': commonValidations.mobileNumber.invalid
+        })
+    }).required().messages({
+        'object.base': commonValidations.poc.invalid,
+        'any.required': commonValidations.poc.required
+    })
+});
+
+
 
 
 
@@ -69,5 +122,6 @@ const roleSchema = Joi.object({
 export const joiSchema = {
     userSchema,
     roleSchema,
+    hospitalSchema
    
 }

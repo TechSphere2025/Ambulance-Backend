@@ -28,7 +28,6 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
       next(error);
       return;
     }
-    console.log("111")
 
     // Extract user information and role from the request body
     const { firstname, lastname, email, countrycode, mobileno, roles } = req.body;
@@ -101,7 +100,6 @@ export const getUsers = async (req: Request, res: Response) => {
 export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password } = req.body;
-    console.log("asdfghjk", req.body)
     const user: any = await baseRepository.findOne("users", "email = $1", [
       email,
     ]);

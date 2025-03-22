@@ -1,6 +1,11 @@
+import { invalid } from "joi";
 
 
 export const commonValidations = {
+    poc : {
+        invalid: 'Point Of Contact must be an object',
+        required: 'Point Of Contact is required'
+    },
     firstName: {
         required: "firstName is Required",
         empty: "firstName cannot be empty",
@@ -97,6 +102,11 @@ export const commonValidations = {
         required: "Mobile Number is Required",
         empty: "mobileNumber cannot be empty",
         invalid: ' invalid mobile number'
+    },
+    hospitalname: {
+        required: "hopital Name is Required",
+        empty: "hopital Name cannot be empty",
+        invalid: ' invalid hopital Name'
     },
     whatsappnumber: {
         required: "whatsapp number is Required",
@@ -198,6 +208,8 @@ export const commonValidations = {
     emailID: {
         required: "emailID is Required",
         empty: "emailID cannot be empty",
+        invalid: "invalid EmailID",
+
     },
     confirmPassword: {
         required: "confirmpassword is Required",

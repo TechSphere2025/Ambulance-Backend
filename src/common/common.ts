@@ -69,6 +69,9 @@ class common {
         return password;
       };
 
+
+  
+
 }
 
 export default new common()
