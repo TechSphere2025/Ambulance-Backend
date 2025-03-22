@@ -59,5 +59,4 @@ export function getStatus(status: number | string): string | number {
   }
 }
 
-export const nishchintRequestEmail = "servicerequest.nishchint@anvayaa.in";
 
