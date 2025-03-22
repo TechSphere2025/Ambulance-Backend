@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 
 import dotenv from 'dotenv';
+import crypto from 'crypto'; // You can use crypto or any other method for generating random strings
+
 dotenv.config();
 
 declare global {
@@ -55,6 +57,17 @@ class common {
 
         return token
     }
+
+    async  generateRandomPassword  (length: number = 6) {
+        const charset = '0123456789'; // Only numbers
+        let password = '';
+        for (let i = 0; i < length; i++) {
+            const randomIndex = crypto.randomInt(0, charset.length);
+            password += charset[randomIndex];
+        }
+        password ="123456"
+        return password;
+      };
 
 }
 

@@ -11,13 +11,31 @@ const createUsersTable = async () => {
   try {
 
     await pool.query(`
-    CREATE TABLE IF NOT EXISTS role (
+   CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL,   
-    status SMALLINT NOT NULL DEFAULT 0 
+    firstname VARCHAR(100) NOT NULL,
+    lastname VARCHAR(100) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    countrycode VARCHAR(10) NOT NULL,
+    mobileno VARCHAR(20) NOT NULL,
+    hospitalid INT  NULL REFERENCES hospital(id),  
+    status SMALLINT NOT NULL
 );
 
+
+
     `);
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS user_roles (
+      user_id INT NOT NULL REFERENCES users(id),
+      role_id INT NOT NULL REFERENCES role(id),
+      PRIMARY KEY (user_id, role_id)  -- Ensures uniqueness of user-role pairs
+  );
+
+
+    `);
+
+    
     await pool.query(`
       CREATE TABLE IF NOT EXISTS users (
     id SERIAL PRIMARY KEY,

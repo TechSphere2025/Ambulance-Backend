@@ -42,6 +42,11 @@ const userSchema = Joi.object({
         'any.required': commonValidations.emailID.required,
         'string.pattern.base': 'Invalid email'
     }),
+    roles: Joi.array().items(Joi.string()).min(1).required().messages({
+        'array.base': 'Roles must be an array',
+        'array.min': 'At least one role is required',
+        'any.required': commonValidations.role.required,
+      }),
     
    
 });
