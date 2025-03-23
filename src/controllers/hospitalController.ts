@@ -179,10 +179,16 @@ export const createHospitalUser = async (req: Request, res: Response, next: Next
 export const hospitalusers = async (req: Request, res: Response, next: NextFunction) => {
   try {
 
-    let hospitalId = 1
+
+    const token = req.headers['token'];
+
+    let details = await getdetailsfromtoken(token)
+
     const users = await baseRepository.findAll("users", {
-      hospitalId: hospitalId
+      hospitalid: details.hospitalid,
+
     });
+
 
     res.json(users);
   } catch (error) {
