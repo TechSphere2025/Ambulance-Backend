@@ -9,6 +9,13 @@ const pool = new Pool({
 
 const createUsersTable = async () => {
   try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS role (
+       id SERIAL PRIMARY KEY,
+       name VARCHAR(255) UNIQUE NOT NULL,
+       status SMALLINT NOT NULL
+     );
+    `);
 
     await pool.query(`
    CREATE TABLE IF NOT EXISTS users (
@@ -27,16 +34,13 @@ const createUsersTable = async () => {
     `);
     await pool.query(`
       CREATE TABLE IF NOT EXISTS user_roles (
-      user_id INT NOT NULL REFERENCES users(id),
-      role_id INT NOT NULL REFERENCES role(id),
+      user_id INT NOT NULL,
+      role_id INT NOT NULL,
       PRIMARY KEY (user_id, role_id)  -- Ensures uniqueness of user-role pairs
   );
 
 
     `);
-
-    
-   
 
     await pool.query(`
         CREATE TABLE IF NOT EXISTS login (
@@ -72,7 +76,6 @@ const createUsersTable = async () => {
     //   );
     // `);
 
-
     // await pool.query(`
     //     CREATE TABLE IF NOT EXISTS patients(
     //      id SERIAL PRIMARY KEY,
@@ -95,7 +98,6 @@ const createUsersTable = async () => {
     //    status INTEGER NOT NULL
     //   );
     // `);
-
   } catch (error) {
     console.error("Error creating users table:", error);
   }
