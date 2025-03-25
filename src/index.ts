@@ -1,4 +1,6 @@
 import express from 'express';
+import cors from "cors";
+
 import dotenv from 'dotenv';
 import userRouter from './routes/userRoutes';
 import hospitalRouter from './routes/hospitalRoutes';
@@ -17,6 +19,8 @@ dotenv.config();
 
 
 const app = express();
+app.use(cors());
+
 
 app.use(express.json());
 app.use('/api/users', userRouter);
@@ -30,6 +34,12 @@ app.use('/api/role', roleRouter);
 
 
 const PORT = process.env.PORT || 3000;
+app.use(cors({
+  origin: "http://localhost:3000",  // Replace with your frontend URL
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true  // Allow cookies
+}))
 // Regular middleware
 
 app.use(errorHandlingMiddleware as ErrorRequestHandler);
