@@ -72,47 +72,72 @@ const createUsersTable = async () => {
     );
          `);
 
+    await pool.query(`
+          CREATE TABLE IF NOT EXISTS patients (
+    patient_id SERIAL PRIMARY KEY,
+    first_name VARCHAR(100) NOT NULL,
+    last_name VARCHAR(100) NOT NULL,
+    date_of_birth DATE,
+    gender VARCHAR(10),
+     country_code VARCHAR(15) NOT NULL,
+    phone_number VARCHAR(15) NOT NULL,
+    email VARCHAR(100),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+         `);
+
+    await pool.query(`
+          CREATE TABLE IF NOT EXISTS ambulance_requests (
+    id SERIAL PRIMARY KEY,
+    patient_id INT ,
+    hospital_id INT NOT NULL,
+    request_status VARCHAR(50) NOT NULL DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+         `);
+
+    await pool.query(`
+         CREATE TABLE IF NOT EXISTS ambulance_trips (
+    trip_id SERIAL PRIMARY KEY,
+    request_id INT ,
+    pickup_address_line1 TEXT,
+    pickup_address_line2 TEXT,
+    pickup_city VARCHAR(100),
+    pickup_state VARCHAR(100),
+    pickup_latitude DECIMAL(9, 6),  -- Latitude (6 decimal places)
+    pickup_longitude DECIMAL(9, 6), -- Longitude (6 decimal places)
+    drop_address_line1 TEXT,
+    drop_address_line2 TEXT,
+    drop_city VARCHAR(100),
+    drop_state VARCHAR(100),
+    drop_latitude DECIMAL(9, 6),  -- Latitude (6 decimal places)
+    drop_longitude DECIMAL(9, 6), -- Longitude (6 decimal places)
+    pickup_time TIMESTAMP,
+    drop_time TIMESTAMP,
+    ambulance_id INT, -- Optionally reference an ambulance or driver
+    driver_id INT, -- Optionally reference an ambulance or driver
+
+    status VARCHAR(50) NOT NULL DEFAULT 'In Progress', -- e.g., In Progress, Completed, Cancelled
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+         `);
+
+    await pool.query(`
+
+         CREATE TABLE IF NOT EXISTS payments (
+          payment_id SERIAL PRIMARY KEY,
+          trip_id INT ,
+          payment_amount DECIMAL(10, 2) NOT NULL,
+          payment_method VARCHAR(50), -- e.g., Credit Card, Cash, Online Transfer
+          payment_status VARCHAR(50) NOT NULL DEFAULT 'Pending', -- e.g., Pending, Completed, Failed
+          payment_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      );
+       `);
 
 
-
-
-    // await pool.query(`
-    //   CREATE TABLE IF NOT EXISTS address (
-    //     id SERIAL PRIMARY KEY,
-    //     hospitalId INTEGER NOT NULL,
-    //     addressLine1 VARCHAR(100) NOT NULL,
-    //     addressLine2 VARCHAR(100) NOT NULL,
-    //     landmark VARCHAR(100) NOT NULL,
-    //     city VARCHAR(100) NOT NULL,
-    //     state VARCHAR(100) NOT NULL,
-    //     lat INTEGER NOT NULL,
-    //     long INTEGER NOT NULL,
-    //     status INTEGER NOT NULL
-    //   );
-    // `);
-
-    // await pool.query(`
-    //     CREATE TABLE IF NOT EXISTS patients(
-    //      id SERIAL PRIMARY KEY,
-    //      firstName VARCHAR(100) NOT NULL,
-    //      lastName VARCHAR(100) NOT NULL,
-    //      mobileNo INTEGER NOT NULL,
-    //      countryCode INTEGER NOT NULL,
-    //      dob INTEGER NOT NULL,
-    //      status INTEGER NOT NULL
-    //     );
-    //   `);
-
-    // await pool.query(`
-    //   CREATE TABLE IF NOT EXISTS payment(
-    //    id SERIAL PRIMARY KEY,
-    //    currencyType VARCHAR(100) NOT NULL,
-    //    amount INTEGER NOT NULL,
-    //    discount INTEGER NOT NULL,
-    //    totalAmount INTEGER NOT NULL,
-    //    status INTEGER NOT NULL
-    //   );
-    // `);
   } catch (error) {
     console.error("Error creating users table:", error);
   }
