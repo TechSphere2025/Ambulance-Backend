@@ -16,6 +16,19 @@ enum RoleName {
     POLICE = "POLICE",
 }
 
+enum AmbulnceType {
+    ALS = "ALS",
+    BLS = "BLS",
+    PTS = "PTS",
+   
+}
+export enum VehicleType {
+    VAN = 'Van',
+    TRUCK = 'Truck',
+    SUV = 'SUV',
+    MOTORCYCLE = 'Motorcycle'
+  }
+
 const userSchema = Joi.object({
     countrycode: Joi.string().required().messages({
         'string.empty': commonValidations.countrycode.empty,
@@ -116,12 +129,50 @@ const hospitalSchema = Joi.object({
 
 
 
+const ambulanceSchema = Joi.object({
+ 
+
+    vehicle_no: Joi.string()
+
+        .max(50)
+        .required()
+        .messages({
+            'string.empty': commonValidations.vehicleNo.empty,
+            'string.max': commonValidations.vehicleNo.max,
+            'any.only': `Ambulance Type must be one of [${Object.values(AmbulnceType).join(', ')}]` // Custom message for invalid enum values
+        }),
+
+    type: Joi.string().valid(...Object.values(AmbulnceType))  // Enum validation here
+        .max(10)
+        .required()
+        .messages({
+            'string.empty': commonValidations.ambulanceType.empty,
+            'string.max': commonValidations.ambulanceType.max,
+            'any.required': commonValidations.ambulanceType.required
+        }),
+
+    vehicle_type: Joi.string().valid(...Object.values(VehicleType))  // Enum validation here
+        .max(15)
+        .required()
+        .messages({
+            'string.empty': commonValidations.VehicleType.empty,
+            'string.max': commonValidations.VehicleType.max,
+            'any.required': commonValidations.VehicleType.required
+        }),
+
+});
+
+export default ambulanceSchema;
+
+
+
 
 
 
 export const joiSchema = {
     userSchema,
     roleSchema,
-    hospitalSchema
+    hospitalSchema,
+    ambulanceSchema
    
 }

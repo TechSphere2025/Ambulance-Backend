@@ -1,7 +1,23 @@
 import { invalid } from "joi";
+import { VehicleType } from "../common/joiValidations/validator";
 
 
 export const commonValidations = {
+    ambulanceType: {
+        empty: 'Type cannot be empty',
+        required: 'Type is required',
+         max: 'ambulance Type  must be at most 15 characters long'
+    },
+    VehicleType: {
+        empty: 'VehicleType cannot be empty',
+        required: 'VehicleType is required',
+         max: 'ambulance Type  must be at most 15 characters long'
+    },
+        vehicleNo: {
+        empty: 'Vehicle number cannot be empty',
+        required: 'Vehicle number is required',
+        max: 'Vehicle number must be at most 50 characters long'
+    },
     poc : {
         invalid: 'Point Of Contact must be an object',
         required: 'Point Of Contact is required'

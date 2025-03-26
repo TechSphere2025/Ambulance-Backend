@@ -61,6 +61,21 @@ const createUsersTable = async () => {
         );
       `);
 
+    await pool.query(`
+          CREATE TABLE IF NOT EXISTS ambulances (
+        id SERIAL PRIMARY KEY,                     
+        vehicle_no VARCHAR(50) UNIQUE NOT NULL,
+        type VARCHAR(10) NOT NULL,                
+        vehicle_type VARCHAR(15) NOT NULL,        
+        hospital_id INT NOT NULL,                  
+        status INTEGER NOT NULL NOT NULL
+    );
+         `);
+
+
+
+
+
     // await pool.query(`
     //   CREATE TABLE IF NOT EXISTS address (
     //     id SERIAL PRIMARY KEY,

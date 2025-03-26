@@ -39,6 +39,20 @@ export const statuses = {
   inactive: "inactive",
 }
 
+export const ambulanceStatus = {
+  available: "available",
+  notavailable: "notavailable",
+  busy:"busy"
+ 
+}
+
+export const ambulanceStatusmap: { [key: number]: string } = {
+  2: "available",
+  3: "notavailable",
+  4:"busy" 
+}
+
+
 
 export const statusmap: { [key: number]: string } = {
   2: "active",
@@ -59,4 +73,17 @@ export function getStatus(status: number | string): string | number {
   }
 }
 
+export function getambulanceStatus(status: number | string): string | number {
+  const statusTypes = ambulanceStatusmap
+  if (typeof status === 'string') {
+    const value = Object.keys(statusTypes).find((obj: any) => statusTypes[obj] === status);
+    if (value) {
+      return parseInt(value)
+    } else {
+      return 'Unknown'
+    }
+  } else {
+    return statusTypes[status] || 'Unknown';
+  }
+}
 

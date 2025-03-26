@@ -7,6 +7,8 @@ import hospitalRouter from './routes/hospitalRoutes';
 import addressRoutes from './routes/addressRoutes';
 import locationRouter from './routes/location';
 import roleRouter from './routes/roleRoutes';
+import ambulanceRouter from './routes/ambulanceRoutes';
+
 
 import requestRouter from './routes/requestRoutes';
 
@@ -30,6 +32,8 @@ app.use('/api/location', locationRouter);
 app.use('/api/requests', requestRouter);
 
 app.use('/api/role', roleRouter);
+app.use('/api/ambulance', ambulanceRouter);
+
 
 
 
