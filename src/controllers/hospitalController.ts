@@ -62,7 +62,7 @@ export const createHospital = async (req: Request, res: Response, next: NextFunc
     // Check if the provided role exists in the 'role' table
     const roleData: any = await baseRepository.select(
       "role",
-      { name: "admin" }, // Assuming the role is passed as a string (e.g., 'admin')
+      { name: "ADMIN" }, // Assuming the role is passed as a string (e.g., 'admin')
       ['id']
     );
 
@@ -93,6 +93,18 @@ export const createHospital = async (req: Request, res: Response, next: NextFunc
 
 
     res.status(201).json(newUser);
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const hospitals = async (req: Request, res: Response) => {
+  logger.info("Entered Into list of hospital");
+
+  try {
+    const users = await baseRepository.findAll("hospital");
+    res.json(users);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });

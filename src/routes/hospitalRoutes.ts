@@ -1,5 +1,5 @@
 import express from 'express';
-import { createHospital,createHospitalUser,hospitalusers } from '../controllers/hospitalController';
+import { createHospital,createHospitalUser,hospitalusers,hospitals } from '../controllers/hospitalController';
 import { validateToken } from '../common/tokenvalidator';
 
 
@@ -11,6 +11,9 @@ const asyncHandler = (fn: any) => (req: any, res: any, next: any) =>
 router.post('/create', asyncHandler(validateToken) ,asyncHandler(createHospital));
 
 router.post('/createUser', asyncHandler(validateToken) ,asyncHandler(createHospitalUser));
+
+router.get('/hospitals', asyncHandler(validateToken) ,asyncHandler(hospitals));
+
 
 
 router.get('/hospitalusers', asyncHandler(validateToken) ,asyncHandler(hospitalusers));
