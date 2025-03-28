@@ -25,7 +25,7 @@ export const createRequest = async (req: Request, res: Response) => {
         last_name: patientData.last_name,
         date_of_birth: patientData.date_of_birth,
         gender: patientData.gender,
-        country_code:patientData.country_code,
+        country_code: patientData.country_code,
         phone_number: patientData.phone_number,
         email: patientData.email,
       },
@@ -34,11 +34,11 @@ export const createRequest = async (req: Request, res: Response) => {
 
     // Set the patient_id in ambulanceRequestData
     ambulanceRequestData.patient_id = newPatient.patient_id;
-    console.log("63",ambulanceRequestData.patient_id )
+    console.log("63", ambulanceRequestData.patient_id)
 
-        const token = req.headers['token'];
-    
-        let details = await getdetailsfromtoken(token)
+    const token = req.headers['token'];
+
+    let details = await getdetailsfromtoken(token)
 
     // Insert ambulance request data into the ambulance_requests table
     const newAmbulanceRequest: any = await baseRepository.insert(
@@ -51,13 +51,13 @@ export const createRequest = async (req: Request, res: Response) => {
       RequestSchema
     );
 
-    console.log("53",newAmbulanceRequest )
+    console.log("53", newAmbulanceRequest)
 
 
     // Set the request_id in ambulanceTripData
     ambulanceTripData.request_id = newAmbulanceRequest.id;
 
-    console.log("59",ambulanceTripData )
+    console.log("59", ambulanceTripData)
 
     // Insert ambulance trip data into the ambulance_trips table
     const newAmbulanceTrip: any = await baseRepository.insert(
@@ -113,17 +113,20 @@ export const createRequest = async (req: Request, res: Response) => {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
   }
-}; 
+};
 
 
-export const viewRequest = async (req: Request, res: Response) => {
+export const pendingrequests = async (req: Request, res: Response) => {
   try {
 
-    const { hospital_id } = req.params;
 
+    const token = req.headers['token'];
+
+    let details = await getdetailsfromtoken(token)
+    const hospital_id = details.hospitalid
     const query = `
     SELECT 
-       ar.ID AS ID, 
+        ar.ID AS ID, 
         ar.hospital_id,
         ar.request_status,
         ar.created_at AS request_created_at,
@@ -172,17 +175,17 @@ export const viewRequest = async (req: Request, res: Response) => {
     LEFT JOIN 
         patients p ON ar.patient_id = p.patient_id
     LEFT JOIN 
-        ambulance_trips at ON ar.ID = at.request_id  -- Use ar.ID here
+        ambulance_trips at ON ar.ID = at.request_id
     LEFT JOIN 
         payments pm ON at.trip_id = pm.trip_id
     WHERE 
-        ar.hospital_id = $1;
-  `;
-
+        ar.hospital_id = $1
+        AND (at.ambulance_id IS NULL AND at.driver_id IS NULL); -- Filter for NULL values
+`;
 
     const result = await pool.query(query, [hospital_id]);
 
-    console.log(result)
+
 
     if (result.rows.length === 0) {
       return res.status(404).json({ message: "No requests found for this hospital ID" });
@@ -240,7 +243,7 @@ export const viewRequest = async (req: Request, res: Response) => {
     }));
 
     res.status(200).json({ requests });
-   
+
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });
