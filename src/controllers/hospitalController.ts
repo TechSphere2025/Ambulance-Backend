@@ -195,14 +195,30 @@ export const hospitalusers = async (req: Request, res: Response, next: NextFunct
     const token = req.headers['token'];
 
     let details = await getdetailsfromtoken(token)
+    const hospitalId = details.hospitalid;
 
-    const users = await baseRepository.findAll("users", {
-      hospitalid: details.hospitalid,
+    const query = `
+  SELECT 
+    u.id, 
+    u.firstname, 
+    u.lastname, 
+    u.email, 
+    u.countrycode, 
+    u.mobileno, 
+    u.hospitalid, 
+    u.status, 
+    r.id AS role_id, 
+    r.name AS role_name
+  FROM users u
+  LEFT JOIN user_roles ur ON u.id = ur.user_id
+  LEFT JOIN role r ON ur.role_id = r.id
+  WHERE u.hospitalid = $1
+`;
+    
+    const usersWithRoles = await baseRepository.query(query, [hospitalId]);
 
-    });
 
-
-    res.json(users);
+    res.json(usersWithRoles);
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: "Internal server error" });

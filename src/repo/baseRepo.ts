@@ -1,6 +1,16 @@
 import pool from '../database'; // Assuming you're using a pool for database connections
 
 class BaseRepository {
+  async query<T>(query: string, values: any[] = []): Promise<T[]> {
+    try {
+      const result = await pool.query(query, values);
+      return result.rows;
+    } catch (error) {
+      console.error('Error executing custom query:', error);
+      throw new Error('Database query failed');
+    }
+  }
+ 
   // Implementing the select method
   async select(arg0: string, arg1: { name: any }, arg2: string[]): Promise<any> {
     try {
@@ -40,10 +50,33 @@ class BaseRepository {
   }
   
 
-  async findOne<T>(table: string, condition: string, values: any[]): Promise<T | null> {
-    const result = await pool.query(`SELECT * FROM ${table} WHERE ${condition} LIMIT 1`, values);
-    return result.rows[0] || null;
+  async findOne<T>(table: string, condition: string | { [key: string]: any }, values?: any[]): Promise<T | null> {
+    try {
+      let query: string;
+      let queryValues: any[] = [];
+  
+      if (typeof condition === 'string') {
+        // SQL-style string condition
+        query = `SELECT * FROM ${table} WHERE ${condition} LIMIT 1`;
+        queryValues = values || [];
+      } else {
+        // Object condition
+        const conditions = Object.keys(condition)
+          .map((key, index) => `${key} = $${index + 1}`)
+          .join(' AND ');
+        
+        query = `SELECT * FROM ${table} WHERE ${conditions} LIMIT 1`;
+        queryValues = Object.values(condition);
+      }
+  
+      const result = await pool.query(query, queryValues);
+      return result.rows[0] || null;
+    } catch (err) {
+      console.error('Error executing findOne query:', err);
+      throw new Error('Database query failed');
+    }
   }
+  
 
   async insert<T>(table: string, data: Record<string, any>, schema: Record<string, any>): Promise<T> {
     // Validate data against schema
@@ -103,6 +136,48 @@ class BaseRepository {
       throw new Error('Database insert failed');
     }
   }
+
+  async update<T>(
+    table: string,
+    condition: string,
+    conditionValues: any[], // Condition values like [trip_id]
+    data: Record<string, any>
+  ): Promise<T> {
+    try {
+      const setClause = Object.keys(data)
+        .map((key, index) => `${key} = $${index + 1}`)
+        .join(', ');
+  
+      const updateValues = Object.values(data);
+      const adjustedCondition = condition.replace(/\$(\d+)/g, (_, match) => {
+        return `$${parseInt(match) + updateValues.length}`;
+      });
+  
+      const finalValues = [...updateValues, ...conditionValues];
+      const query = `
+        UPDATE ${table}
+        SET ${setClause}
+        WHERE ${adjustedCondition}
+        RETURNING *
+      `;
+
+  
+      const result = await pool.query(query, finalValues);
+      return result.rows[0];
+    } catch (error) {
+      console.error('Error executing update query:', error);
+      throw new Error('Database update failed');
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
 
 }
 

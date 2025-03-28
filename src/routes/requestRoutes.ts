@@ -1,5 +1,5 @@
 import express from 'express';
-import { createRequest,pendingrequests } from '../controllers/requestController';
+import { createRequest,pendingrequests,assignAmbulanceanddriver } from '../controllers/requestController';
 import { validateToken } from '../common/tokenvalidator';
 
 
@@ -10,6 +10,7 @@ const asyncHandler = (fn: any) => (req: any, res: any, next: any) =>
 
 router.post('/createRequest', asyncHandler(validateToken), asyncHandler(createRequest));
 router.get('/pendingrequests',asyncHandler(validateToken),  asyncHandler(pendingrequests));
+router.post('/assignAmbulanceanddriver',asyncHandler(validateToken),  asyncHandler(assignAmbulanceanddriver));
 
 
 

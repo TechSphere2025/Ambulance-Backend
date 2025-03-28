@@ -249,3 +249,72 @@ export const pendingrequests = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Internal server error" });
   }
 }; 
+
+export const assignAmbulanceanddriver = async (req: Request, res: Response) => {
+  try {
+    const { trip_id, ambulance_id, driver_id } = req.body;
+
+    if (!trip_id || !ambulance_id || !driver_id) {
+      return res.status(400).json({ error: "Missing required fields" });
+    }
+
+    // Check if the trip exists
+    const existingTrip:any = await baseRepository.findOne("ambulance_trips", "trip_id = $1", [trip_id]);
+
+    if (!existingTrip) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+
+    if (!existingTrip) {
+      return res.status(404).json({ error: "Trip not found" });
+    }
+
+    // Start transaction
+    // await baseRepository.startTransaction();
+
+    // Update ambulance trip
+    await baseRepository.update(
+      "ambulance_trips",  // Table
+      "trip_id = $1",     // Condition
+      [trip_id],          // Condition value(s)
+      {
+        ambulance_id,
+        driver_id,
+        status: "Assigned Ambulance",
+        updated_at: new Date()
+      }  // Data to update
+    );
+    
+
+    // Update the corresponding request status
+
+    const request = await baseRepository.findOne("ambulance_requests", { id: existingTrip.request_id });
+
+    if (request) {
+      await baseRepository.update(
+        "ambulance_requests",  // Table name
+        "id = $1",     // Condition (assuming `request_id` is unique)
+        [existingTrip.request_id],  // Condition value (parameterized for SQL injection safety)
+        {
+          request_status: "Ambulance Assigned",  // Updated field
+          updated_at: new Date()        // Updated timestamp
+        }  // Data to update
+      );
+      
+    }
+
+    // Commit transaction
+    // await baseRepository.commitTransaction();
+
+    res.status(200).json({
+      message: "Ambulance and driver assigned successfully",
+      trip: { ...existingTrip, ambulance_id, driver_id, trip_status: "Assigned Ambulance" },
+      request: request ? { ...request, request_status: "Ambulance Assigned" } : null
+    });
+
+  } catch (error) {
+    // await baseRepository.rollbackTransaction();
+    console.error("Error assigning ambulance and driver:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
