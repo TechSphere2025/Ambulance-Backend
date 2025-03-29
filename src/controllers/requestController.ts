@@ -558,4 +558,175 @@ WHERE
   }
 };
 
+export const mytrips = async (req: Request, res: Response) => {
+  try {
+    const token = req.headers['token'];
+
+    let details = await getdetailsfromtoken(token);
+    const hospital_id = details.hospitalid;
+    const driver_id = details.id;
+
+    const query = `
+    SELECT 
+      ar.ID AS request_id, 
+      ar.hospital_id,
+      ar.request_status,
+      ar.created_at AS request_created_at,
+      ar.updated_at AS request_updated_at,
+
+      -- Patient details
+      p.patient_id,
+      p.first_name,
+      p.last_name,
+      p.date_of_birth,
+      p.gender,
+      p.phone_number,
+      p.email,
+
+      -- Ambulance trip details
+      at.trip_id,
+      at.pickup_address_line1,
+      at.pickup_address_line2,
+      at.pickup_city,
+      at.pickup_state,
+      at.pickup_latitude,
+      at.pickup_longitude,
+      at.drop_address_line1,
+      at.drop_address_line2,
+      at.drop_city,
+      at.drop_state,
+      at.drop_latitude,
+      at.drop_longitude,
+      at.pickup_time,
+      at.drop_time,
+      at.ambulance_id,
+      at.driver_id,
+      at.status AS trip_status,
+      at.created_at AS trip_created_at,
+      at.updated_at AS trip_updated_at,
+
+      -- Payment details
+      pm.payment_id,
+      pm.payment_amount,
+      pm.payment_method,
+      pm.payment_status,
+      pm.payment_date,
+
+      -- Ambulance details (based on your schema)
+      am.id AS ambulance_id,
+      am.vehicle_no,
+      am.type AS ambulance_type,
+      am.vehicle_type,
+      am.hospital_id AS ambulance_hospital_id,
+      am.status AS ambulance_status,
+
+      -- Driver details
+      u.id AS driver_id,
+      u.firstname AS driver_firstname,
+      u.lastname AS driver_lastname,
+      u.email AS driver_email,
+      u.mobileno AS driver_mobileno,
+      u.countrycode AS driver_countrycode
+
+    FROM 
+      ambulance_requests ar
+    LEFT JOIN 
+      patients p ON ar.patient_id = p.patient_id
+    LEFT JOIN 
+      ambulance_trips at ON ar.ID = at.request_id
+    LEFT JOIN 
+      payments pm ON at.trip_id = pm.trip_id
+    LEFT JOIN
+      ambulances am ON at.ambulance_id = am.id
+    LEFT JOIN
+      users u ON at.driver_id = u.id
+    WHERE 
+      ar.hospital_id = $1
+      AND ($2::INT IS NULL OR at.driver_id = $2);
+    `;
+
+    const result = await pool.query(query, [hospital_id, driver_id || null]);
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ message: "No completed trips found for this driver ID" });
+    }
+
+    const requests = result.rows.map((row) => ({
+      request_id: row.request_id,
+      hospital_id: row.hospital_id,
+      request_status: row.request_status,
+      request_created_at: row.request_created_at,
+      request_updated_at: row.request_updated_at,
+
+      patient: {
+        patient_id: row.patient_id,
+        first_name: row.first_name,
+        last_name: row.last_name,
+        date_of_birth: row.date_of_birth,
+        gender: row.gender,
+        phone_number: row.phone_number,
+        email: row.email,
+      },
+
+      ambulance_trip: {
+        trip_id: row.trip_id,
+        pickup_address_line1: row.pickup_address_line1,
+        pickup_address_line2: row.pickup_address_line2,
+        pickup_city: row.pickup_city,
+        pickup_state: row.pickup_state,
+        pickup_latitude: row.pickup_latitude,
+        pickup_longitude: row.pickup_longitude,
+        drop_address_line1: row.drop_address_line1,
+        drop_address_line2: row.drop_address_line2,
+        drop_city: row.drop_city,
+        drop_state: row.drop_state,
+        drop_latitude: row.drop_latitude,
+        drop_longitude: row.drop_longitude,
+        pickup_time: row.pickup_time,
+        drop_time: row.drop_time,
+        ambulance_id: row.ambulance_id,
+        driver_id: row.driver_id,
+        trip_status: row.trip_status,
+        trip_created_at: row.trip_created_at,
+        trip_updated_at: row.trip_updated_at,
+      },
+
+      payment: {
+        payment_id: row.payment_id,
+        payment_amount: row.payment_amount,
+        payment_method: row.payment_method,
+        payment_status: row.payment_status,
+        payment_date: row.payment_date,
+      },
+
+      ambulance: {
+        ambulance_id: row.ambulance_id,
+        vehicle_no: row.vehicle_no,
+        ambulance_type: row.ambulance_type,
+        vehicle_type: row.vehicle_type,
+        hospital_id: row.ambulance_hospital_id,
+        ambulance_status: row.ambulance_status,
+      },
+
+      driver: {
+        driver_id: row.driver_id,
+        driver_firstname: row.driver_firstname,
+        driver_lastname: row.driver_lastname,
+        driver_email: row.driver_email,
+        driver_mobileno: row.driver_mobileno,
+        driver_countrycode: row.driver_countrycode,
+      },
+    }));
+
+    res.status(200).json({ requests });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
+
+
 

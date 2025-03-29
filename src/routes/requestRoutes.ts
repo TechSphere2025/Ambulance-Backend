@@ -1,5 +1,5 @@
 import express from 'express';
-import { createRequest,pendingrequests,assignAmbulanceanddriver,updatetrip,completedtrips  } from '../controllers/requestController';
+import { createRequest,pendingrequests,assignAmbulanceanddriver,updatetrip,completedtrips,mytrips  } from '../controllers/requestController';
 import { validateToken } from '../common/tokenvalidator';
 
 
@@ -14,6 +14,9 @@ router.post('/assignAmbulanceanddriver',asyncHandler(validateToken),  asyncHandl
 router.post('/updatetripdetails',asyncHandler(validateToken),  asyncHandler(updatetrip));
 
 router.get('/completedtrips',asyncHandler(validateToken),  asyncHandler(completedtrips));
+
+router.get('/mytrips',asyncHandler(validateToken),  asyncHandler(mytrips));
+
 
 
 
